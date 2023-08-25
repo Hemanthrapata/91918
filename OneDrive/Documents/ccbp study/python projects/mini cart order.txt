@@ -1,0 +1,77 @@
+class Product:
+    def __init__(self,product,price,deal_price,ratings):
+        self.product=product
+        self.price=price
+        self.deal_price=deal_price
+        self.ratings=ratings
+        self.you_save=price-deal_price
+    def display_product_details(self):
+        print('product name :{}'.format(self.product))
+        print('price :{}'.format(self.price))
+        print('deal price :{}'.format(self.deal_price))
+        print('ratings :{}'.format(self.ratings))
+        print('you saved :{}'.format(self.you_save))
+    
+    def get_deal_price(self):
+        return self.deal_price
+        
+class ElectronicItem(Product):
+    def __init__(self,product,price,deal_price,ratings,warranty_in_months):#over riding the superclass
+        super().__init__(product,price,deal_price,ratings)#over riding super class because we want a same attributes in super calss we dont need to write code again and again
+        self.warranty_in_months=warranty_in_months#only wanted attribute so initilise and addd value
+    def display_product_details(self):#calling display_product_details in this ElectronicItem
+        super().display_product_details()#inherits all the code from super class dispaly details
+        print("warranty in {} months".format(self.warranty_in_months))#printing warranty_in_months
+    
+class GroceryItem(Product):
+    def __init__(self,product,price,deal_price,ratings,expiry_date):#over riding the superclass
+        super().__init__(product,price,deal_price,ratings)#over riding super class because we want a same attributes in super calss we dont need to write code again and again
+        self.expiry_date=expiry_date#only wanted attribute so initilise and addd value
+    def display_product_details(self):#calling display_product_details in this ElectronicItem
+        super().display_product_details()#inherits all the code from super class dispaly details
+        print("expires in {} days".format(self.expiry_date))#printing warranty_in_months
+
+class Order:
+    delivery_charges={
+        "normal":100,
+        "prime delivery":0
+    }
+    def __init__(self,delivery_method,delivery_address):
+        self.items_cart=[]
+        self.delivery_method=delivery_method
+        self.delivery_address=delivery_address
+    def add_items(self,product,quantity):
+        self.items_cart.append((product,quantity))
+        
+    def display_order_details(self):
+        print('delivery_method :{}'.format(self.delivery_method))
+        print('delivery_address :{}'.format(self.delivery_address))
+        print("products")
+        print('----------------------')
+        for product,quantity in self.items_cart:
+            product.display_product_details()
+            print('quantity :{}'.format(quantity))
+            print('')
+        print('----------------------')
+        total_bill=self.get_total_bill()
+        print('Total bill :{}'.format(total_bill))
+    def get_total_bill(self):
+        total_bill=0
+        for product,quantity in self.items_cart:
+            total_bill=total_bill+product.get_deal_price() * quantity
+        oder_delivery_charges=Order.delivery_charges[self.delivery_method]
+        total_bill+=oder_delivery_charges
+        return total_bill
+    @classmethod
+    def update_delivert_charges(cls,delivery_method,charges):
+        cls.delivery_charges[delivery_method]=charges
+
+
+        
+mobile=ElectronicItem("mobile",23000,21000,3.5,24)#adding directly in add warranty_in_months 
+GroceryItem=GroceryItem("milk",35,29,4.6,20)
+my_order=Order('normal','hyderabad')
+my_order.add_items(mobile,2)
+my_order.add_items(GroceryItem,3)
+Order.update_delivert_charges("normal",13)
+my_order.display_order_details()
